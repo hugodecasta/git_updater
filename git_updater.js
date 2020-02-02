@@ -3,6 +3,14 @@
 const child_process = require('child_process')
 const fs = require('fs')
 
+// -------------------------------------------------------------- VARS
+
+const map_path = process.argv[3] || './systems.json'
+if(!fs.existsSync(map_path)) {
+    console.log('Systems map "'+map_path+'" missing')
+    exit(1)
+}
+
 // -------------------------------------------------------------- FUNCTIONS
 
 function rebase_sys_data(sys_data) {
@@ -24,7 +32,7 @@ function rebase_sys_data(sys_data) {
 
 // -------------------------------------------------------------- CORE
 
-let systems_map = JSON.parse(fs.readFileSync('systems.json','utf8'))
+let systems_map = JSON.parse(fs.readFileSync(map_path,'utf8'))
 
 for(let sys_name in systems_map) {
 
