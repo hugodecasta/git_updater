@@ -5,7 +5,7 @@ const fs = require('fs')
 
 // -------------------------------------------------------------- VARS
 
-const map_path = process.argv[3] || './systems.json'
+const map_path = process.argv[2] || './systems.json'
 if(!fs.existsSync(map_path)) {
     console.log('Systems map "'+map_path+'" missing')
     process.exit(1)
