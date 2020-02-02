@@ -8,7 +8,7 @@ const fs = require('fs')
 const map_path = process.argv[3] || './systems.json'
 if(!fs.existsSync(map_path)) {
     console.log('Systems map "'+map_path+'" missing')
-    exit(1)
+    process.exit(1)
 }
 
 // -------------------------------------------------------------- FUNCTIONS
