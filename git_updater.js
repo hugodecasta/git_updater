@@ -51,7 +51,7 @@ function setup_process(name) {
 
     let desc = sys_map.process[name]
 
-    let setups = desc.setup_procs
+    let setups = desc.setup
     for(let com of setups) {
         child_process.execSync(com)
     }
