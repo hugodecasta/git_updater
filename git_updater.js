@@ -126,8 +126,8 @@ function launch_repo(name) {
     // --- clone ?
 
     if(!fs.existsSync(repo_dir)) {
-        log('cloning',repo_name)
-        child_process.execSync('\n-- git clone '+git+' '+repo_dir)
+        log('\ncloning',repo_name)
+        child_process.execSync('git clone '+git+' '+repo_dir)
         setup_procs()
     }
 
