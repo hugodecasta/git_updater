@@ -6,19 +6,19 @@ const fs = require('fs')
 
 // -------------------------------------------------------------- VARS
 
-const map_path = process.argv[2] || './systems.json'
-if(!fs.existsSync(map_path)) {
-    log('Systems map "'+map_path+'" missing')
-    process.exit(1)
-}
-let sys_map = JSON.parse(fs.readFileSync(map_path,'utf8'))
-
 function log() {
     console.log.apply(console, arguments);
     let str = Array.from(arguments).join(' ')
     logger('[GIT UPDATER] - '+str,'log.log')
     logger(str,__dirname+'/log.log')
 }
+
+const map_path = process.argv[2] || './systems.json'
+
+const pull_interval_secs = 30
+const system_map_check_secs = 10
+
+var sys_map = {}
 
 // -------------------------------------------------------------- PROCESS
 
@@ -72,6 +72,7 @@ function stop_process(name) {
 
 // -------------------------------------------------------------- REPO
 
+let repos = {}
 function launch_repo(name) {
 
     let desc = sys_map.repo[name]
@@ -107,7 +108,11 @@ function launch_repo(name) {
         });
         return new Promise(ok=>{
             updater.on('exit',function(code) {
-                ok(full_data.length > 1)
+                let updated = full_data.length > 1
+                if(updated) {
+                    log(git,'updated')
+                }
+                ok(updated)
             })
         })
     }
@@ -128,21 +133,57 @@ function launch_repo(name) {
 
     // --- procedure
 
-    setInterval(async function() {
+    repos[name] = setInterval(async function() {
         if(await is_updated()) {
-            log(name,"updated !")
+            log(name,"restart !")
             stop_procs()
             start_procs()
         }
-    },5000)
+    },pull_interval_secs*1000)
+}
+
+function stop_repo(name) {
+    clearInterval(repos[name])
 }
 
 // -------------------------------------------------------------- CORE
 
-for(let proc in sys_map.process) {
-    start_process(proc)
+function launch_system() {
+
+    // --- stop existing proc & repos
+    for(let proc in processes) {
+        stop_process(proc)
+    }
+    for(let proc in repos) {
+        stop_repo(proc)
+    }
+
+
+    // --- start new proc & repos
+    for(let proc in sys_map.process) {
+        start_process(proc)
+    }
+    for(let repo in sys_map.repo) {
+        launch_repo(repo)
+    }
 }
 
-for(let repo in sys_map.repo) {
-    launch_repo(repo)
+function check_map() {
+
+    if(!fs.existsSync(map_path)) {
+        log('Systems map "'+map_path+'" missing')
+        process.exit(1)
+    }
+
+    let old_map_str = JSON.stringify(sys_map)
+    let new_map_str = fs.readFileSync(map_path,'utf8')
+
+    if(old_map_str != new_map_str) {
+        log('launch new system map')
+        sys_map = JSON.parse(new_map_str)
+        launch_system()
+    }
 }
+
+setInterval(check_map,system_map_check_secs*1000)
+check_map()
