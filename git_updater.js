@@ -49,7 +49,7 @@ function setup_repo(name) {
 
     log(name,'setup')
 
-    let desc = sys_map.repos[name]
+    let desc = sys_map.repo[name]
 
     let setups = desc.setup
     for(let com of setups) {
