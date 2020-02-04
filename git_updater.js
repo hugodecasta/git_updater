@@ -110,7 +110,7 @@ function launch_repo(name) {
             updater.on('exit',function(code) {
                 let updated = full_data.length > 1
                 if(updated) {
-                    log(git,'updated')
+                    log('\n--',git,'updated')
                 }
                 ok(updated)
             })
@@ -127,7 +127,7 @@ function launch_repo(name) {
 
     if(!fs.existsSync(repo_dir)) {
         log('cloning',repo_name)
-        child_process.execSync('git clone '+git+' '+repo_dir)
+        child_process.execSync('\n-- git clone '+git+' '+repo_dir)
         setup_procs()
     }
 
@@ -149,6 +149,8 @@ function stop_repo(name) {
 // -------------------------------------------------------------- CORE
 
 function launch_system() {
+
+    log('-------------------- SYS LAUNCH')
 
     // --- stop existing proc & repos
     for(let proc in processes) {
@@ -176,10 +178,9 @@ function check_map() {
     }
 
     let old_map_str = JSON.stringify(sys_map)
-    let new_map_str = fs.readFileSync(map_path,'utf8')
+    let new_map_str = JSON.stringify(JSON.parse(fs.readFileSync(map_path,'utf8')))
 
     if(old_map_str != new_map_str) {
-        log('launch new system map')
         sys_map = JSON.parse(new_map_str)
         launch_system()
     }
