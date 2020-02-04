@@ -11,5 +11,7 @@
     "url": "https://github.com/hugodecasta/git_updater.git"
   },
   "author": "hugo castaneda",
-  "dependencies": {}
+  "dependencies": {
+    "log-to-file": "^2.0.2"
+  }
 }

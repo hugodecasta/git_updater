@@ -1,16 +1,22 @@
 // -------------------------------------------------------------- IMPORTS
 
 const child_process = require('child_process')
+const logger = require('log-to-file')
 const fs = require('fs')
 
 // -------------------------------------------------------------- VARS
 
 const map_path = process.argv[2] || './systems.json'
 if(!fs.existsSync(map_path)) {
-    console.log('Systems map "'+map_path+'" missing')
+    log('Systems map "'+map_path+'" missing')
     process.exit(1)
 }
 let sys_map = JSON.parse(fs.readFileSync(map_path,'utf8'))
+
+function log() {
+    console.log.apply(console,arguments)
+    logger(Array.from(arguments).join(' '),'log.log')
+}
 
 // -------------------------------------------------------------- PROCESS
 
@@ -20,7 +26,7 @@ let processes = {}
 
 function start_process(name) {
 
-    console.log(name,'start')
+    log(name,'start')
 
     let desc = sys_map.process[name]
 
@@ -30,7 +36,7 @@ function start_process(name) {
     let exec_sp = exec_command.split(' ')
     let process = child_process.spawn(exec_sp[0],exec_sp.slice(1))
     process.on('exit',function(code) {
-        console.log(name,'exit',code)
+        log(name,'exit',code)
     })
 
     processes[name] = process
@@ -40,7 +46,7 @@ function start_process(name) {
 
 function setup_process(name) {
 
-    console.log(name,'setup')
+    log(name,'setup')
 
     let desc = sys_map.process[name]
 
@@ -57,7 +63,7 @@ function stop_process(name) {
     if(!(name in processes)) {
         return
     }
-    console.log(name,'kill')
+    log(name,'kill')
 
     processes[name].kill('SIGINT')
 }
@@ -113,7 +119,7 @@ function launch_repo(name) {
     // --- clone ?
 
     if(!fs.existsSync(repo_dir)) {
-        console.log('cloning',repo_name)
+        log('cloning',repo_name)
         child_process.execSync('git clone '+git+' '+repo_dir)
         setup_procs()
     }
@@ -122,7 +128,7 @@ function launch_repo(name) {
 
     setInterval(async function() {
         if(await is_updated()) {
-            console.log(name,"updated !")
+            log(name,"updated !")
             stop_procs()
             start_procs()
         }
