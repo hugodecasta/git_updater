@@ -14,8 +14,10 @@ if(!fs.existsSync(map_path)) {
 let sys_map = JSON.parse(fs.readFileSync(map_path,'utf8'))
 
 function log() {
-    console.log.apply(console,arguments)
-    logger(Array.from(arguments).join(' '),'log.log')
+    console.log.apply(console, arguments);
+    let str = Array.from(arguments).join(' ')
+    logger('[GIT UPDATER] - '+str,'log.log')
+    logger(str,__dirname+'log.log')
 }
 
 // -------------------------------------------------------------- PROCESS
