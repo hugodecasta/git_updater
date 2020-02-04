@@ -45,11 +45,11 @@ function start_process(name) {
 
 // --------
 
-function setup_process(name) {
+function setup_repo(name) {
 
     log(name,'setup')
 
-    let desc = sys_map.process[name]
+    let desc = sys_map.repos[name]
 
     let setups = desc.setup
     for(let com of setups) {
@@ -88,10 +88,8 @@ function launch_repo(name) {
 
     // --- meths
 
-    function setup_procs() {
-        for(let proc of procs) {
-            setup_process(proc)
-        }
+    function setup_me() {
+        setup_repo(name)
     }
 
     function start_procs() {
@@ -128,13 +126,14 @@ function launch_repo(name) {
     if(!fs.existsSync(repo_dir)) {
         log('\ncloning',repo_name)
         child_process.execSync('git clone '+git+' '+repo_dir)
-        setup_procs()
+        setup_me()
     }
 
     // --- procedure
 
     repos[name] = setInterval(async function() {
         if(await is_updated()) {
+            setup_me()
             log(name,"restart !")
             stop_procs()
             start_procs()
