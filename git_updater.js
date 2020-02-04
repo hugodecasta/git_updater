@@ -15,7 +15,6 @@ function log() {
 
 const map_path = process.argv[2] || './systems.json'
 
-const pull_interval_secs = 30
 const system_map_check_secs = 10
 
 var sys_map = {}
@@ -80,6 +79,7 @@ function launch_repo(name) {
     let git = desc.git
     let dir = desc.dir
     let procs = desc.processes
+    let ttp = desc.ttp
 
     let repo_name = git.split('/')
     repo_name = repo_name[repo_name.length-1]
@@ -139,7 +139,7 @@ function launch_repo(name) {
             stop_procs()
             start_procs()
         }
-    },pull_interval_secs*1000)
+    },ttp*1000)
 }
 
 function stop_repo(name) {
