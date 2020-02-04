@@ -17,7 +17,7 @@ function log() {
     console.log.apply(console, arguments);
     let str = Array.from(arguments).join(' ')
     logger('[GIT UPDATER] - '+str,'log.log')
-    logger(str,__dirname+'log.log')
+    logger(str,__dirname+'/log.log')
 }
 
 // -------------------------------------------------------------- PROCESS
