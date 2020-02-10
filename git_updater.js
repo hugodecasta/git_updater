@@ -161,11 +161,11 @@ function launch_system() {
 
 
     // --- start new proc & repos
-    for(let proc in sys_map.process) {
-        start_process(proc)
-    }
     for(let repo in sys_map.repo) {
         launch_repo(repo)
+    }
+    for(let proc in sys_map.process) {
+        start_process(proc)
     }
 }
 
