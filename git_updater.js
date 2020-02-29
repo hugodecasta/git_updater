@@ -66,7 +66,11 @@ function stop_process(name) {
     }
     log(name,'kill')
 
-    processes[name].kill('SIGINT')
+    try {
+        processes[name].kill('SIGINT')
+    } catch(err) {
+        console.error('cannot kill process',name,err)
+    }
 }
 
 // -------------------------------------------------------------- REPO
